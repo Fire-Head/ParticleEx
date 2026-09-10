@@ -26,7 +26,7 @@ as well as changes or updates to existing elements, which sometimes caused the g
 
 Vice City's effects were also downgraded, as R* wanted to leave room for improvements on PS2 and to minimize future issues with the PC port.
 But unlike GTA 3, these downgrades were in place from the very beginning, and particle effects were redesigned with them in mind, so they don't look as bad as they do in the PC port of GTA 3.
-As a result, effects in the PC port this time are almost identical to PS2 version, aside from a few sprite changes.
+As a result, effects in the PC port this time are almost identical to PS2 version, aside from a few sprite changes and a slight decrease in the quality of the smoke.
 
 
 Later, when Microsoft convinced R* to make a graphically enhanced port of both games for the Original Xbox,
@@ -42,7 +42,7 @@ Because of all this, ParticleEx was created. The plugin ports particle systems f
 This section will list all known changes to particle effects across all platforms. Keep in mind that, although it focuses mainly on what PC version of GTA 3 was missing from the very beginning, ParticleEx restores and ports all these things back into the game.
 
 
-* ### [III][Xbox/PS2] Smoke
+* ### [III/VC][Xbox/PS2] Smoke
   The biggest downgrade that hit the PC port, causing the game to lose its most essential part.
   
   This affected effects like smoke, steam, dust and exhaust fumes.
@@ -62,6 +62,8 @@ This section will list all known changes to particle effects across all platform
   <p align="left">
     <img width="800" height="600" alt="rasta smoke" src="https://github.com/user-attachments/assets/4c91d85c-3dfa-4893-b755-db401921d4b7" />
   </p>
+  
+  Vice City also suffers from reduced smoke quality on PC, but it's hardly noticeable. As for the Xbox port, unfortunately, Vienna left this aspect the same as on PC.
 
 * ### [III/VC][Xbox/PS2] Particle objects / 2dfx
   Effects that are placed on the map, used for steam from pipes, vents, etc. The game reads them from `2dfx` section of `.ide` files.
@@ -204,7 +206,7 @@ This section will list all known changes to particle effects across all platform
     <img width="800" height="600" alt="ft" src="https://github.com/user-attachments/assets/1766f5a6-b419-415a-966e-350e0457e699" />
   </p>
 
-* ### [III][Xbox] Increased hydrant waterspray time
+* ### [III/VC][Xbox] Increased hydrant waterspray time
   This change is quite strange. For some reason, Vienna decided to change the time that a broken fire hydrant sprays water, from ***5*** seconds to ***15*** seconds. Well, it's a huge waste of resources in every sense, but we can afford it now.
 
 # Additional features
