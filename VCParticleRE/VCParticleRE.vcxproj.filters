@@ -124,6 +124,9 @@
     <ClCompile Include="ParticlePS2.cpp">
       <Filter>Particle\PS2</Filter>
     </ClCompile>
+    <ClCompile Include="PObjectMgr.cpp">
+      <Filter>Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">
@@ -262,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="ParticlePS2.h">
       <Filter>Particle\PS2</Filter>
+    </ClInclude>
+    <ClInclude Include="PObjectMgr.h">
+      <Filter>Particle</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

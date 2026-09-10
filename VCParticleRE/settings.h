@@ -7,10 +7,12 @@ class CSettings
 {
 public:
 	Bool m_bFixMolotovBug;
+	Bool m_bRestoreXboxHydrantWaterSpray;
 	Bool m_bFixFlame5Bug;
 	//Bool m_bUsePS2CarPuddlePhysics;
 	//Bool m_bAltPS2Carsplash;
 	//Bool m_bCorrectWheelsRainWaterSplash;
+	Bool m_bFixWaterDropsInInteriors;
 	Bool m_bDarkSpotsBugFix;
 
 	UInt32 m_nParticleSwitch;

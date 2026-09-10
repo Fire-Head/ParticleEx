@@ -279,6 +279,8 @@ void CParticle::ReloadConfig()
 
 		gParticleArray[i].m_nFadeAlphaTimer = 0;
 
+		// missing on PS2
+/*
 		gParticleArray[i].m_nCurrentZRotation = 0;
 
 		gParticleArray[i].m_nZRotationTimer = 0;
@@ -286,6 +288,7 @@ void CParticle::ReloadConfig()
 		gParticleArray[i].m_fCurrentZRadius = 0.0f;
 
 		gParticleArray[i].m_nZRadiusTimer = 0;
+*/
 
 		gParticleArray[i].m_nCurrentFrame = 0;
 
@@ -901,19 +904,6 @@ CParticle *CParticle::AddParticle(tParticleType type, CVector const &vecPos, CVe
 {
 	if ( CTimer::m_UserPause || CTimer::m_CodePause )
 		return NULL;
-
-	if ( ( type == PARTICLE_ENGINE_SMOKE
-		|| type == PARTICLE_ENGINE_SMOKE2
-		|| type == PARTICLE_ENGINE_STEAM
-		|| type == PARTICLE_CARFLAME_SMOKE
-		|| type == PARTICLE_RUBBER_SMOKE
-		|| type == PARTICLE_BURNINGRUBBER_SMOKE
-		|| type == PARTICLE_EXHAUST_FUMES
-		|| type == PARTICLE_CARCOLLISION_DUST )
-		&& nParticleCreationInterval & CTimer::m_FrameCounter )
-	{
-		return NULL;
-	}
 	
 	if ( CReplay::Mode != 1 )
 		CReplay::RecordParticle((::tParticleType)type, vecPos, vecDir, fSize, color);
@@ -950,18 +940,24 @@ CParticle *CParticle::AddParticle(tParticleType type, CVector const &vecPos, CVe
 	
 	if ( psystem->m_nFadeAlphaTime )
 		pParticle->m_nFadeAlphaTimer /= psystem->m_nFadeAlphaTime;
-
+	
+	// missing on PS2
+/*
 	pParticle->m_nCurrentZRotation = psystem->m_nZRotationInitialAngle;
 	pParticle->m_fCurrentZRadius = psystem->m_fInitialZRadius;
-	
+*/
+
 	if ( nCurFrame != 0 )
 		pParticle->m_nCurrentFrame = nCurFrame;
 	else
 		pParticle->m_nCurrentFrame = psystem->m_nStartAnimationFrame;
 	
-	
+	// missing on PS2
+/*
 	pParticle->m_nZRotationTimer = 0;
 	pParticle->m_nZRadiusTimer = 0;
+*/
+
 	pParticle->m_nAnimationSpeedTimer = 0;
 	pParticle->m_fZGround = 0.0f;
 	
@@ -983,7 +979,10 @@ CParticle *CParticle::AddParticle(tParticleType type, CVector const &vecPos, CVe
 	
 	pParticle->m_vecVelocity = vecDir;
 	
+	// missing on Ps2
+/*
 	pParticle->m_vecParticleMovementOffset = CVector(0.0f, 0.0f, 0.0f);
+*/
 	pParticle->m_nTimeWhenColorWillBeChanged = 0;
 	
 	if ( color.alpha != 0 )
@@ -1213,7 +1212,12 @@ void CParticle::Update()
 			
 			if ( psystem->m_Type == PARTICLE_WATERDROP )
 			{
+				extern int GetFixedArea();
+#ifdef FIX_BUGS
+				if ( GetFixedArea() != 0 || clearWaterDrop == true )
+#else
 				if ( CGame::currArea != 0 || clearWaterDrop == true )
+#endif
 				{
 					bRemoveParticle = true;
 					continue;
@@ -1380,7 +1384,7 @@ void CParticle::Update()
 				if ( numWaterDropOnScreen < nMaxDrops && numWaterDropOnScreen < 63
 					&& fDistToCam < 10.0f
 					&& clearWaterDrop == false
-					&& CGame::currArea == 0 )
+					/*&& CGame::currArea == 0*/ /*missing on PS2*/ )
 				{
 					CVector vecWaterdropTarget
 					(
@@ -1406,7 +1410,7 @@ void CParticle::Update()
 							vecWaterdropPos.y  = (Float)CGeneral::GetRandomNumberInRange(150, RsGlobal.h - 200);
 					}
 					
-					vecWaterdropPos.z = 2.0f;
+					vecWaterdropPos.z = 1.0f;
 
 					if ( AddParticle(PARTICLE_WATERDROP,
 										vecWaterdropPos,
@@ -1768,7 +1772,9 @@ void CParticle::Update()
 					continue;
 				}
 			}
-			
+	
+			// missing on PS2
+/*
 			if ( psystem->m_nZRotationAngleChangeAmount != 0 )
 			{
 				if ( particle->m_nZRotationTimer >= psystem->m_nZRotationChangeTime )
@@ -1790,6 +1796,7 @@ void CParticle::Update()
 				else
 					++particle->m_nZRadiusTimer;
 			}
+*/
 
 			if ( psystem->m_nAnimationSpeed != 0 )
 			{
@@ -1811,7 +1818,9 @@ void CParticle::Update()
 			
 			if ( particle->m_nRotationStep != 0 )
 				particle->m_nRotation += particle->m_nRotationStep;
-			
+	
+			// missing on PS2
+/*
 			if ( particle->m_fCurrentZRadius != 0.0f )
 			{
 				//Int32 nSinCosIndex = particle->m_nCurrentZRotation % (SIN_COS_TABLE_SIZE - 1);
@@ -1829,6 +1838,7 @@ void CParticle::Update()
 				
 				particle->m_vecParticleMovementOffset = CVector(fX, fY, 0.0f);
 			}
+*/
 			
 			particle->m_vecPosition = vecPos;
 		}
@@ -1854,26 +1864,12 @@ void CParticle::Render()
 	for ( Int32 i = 0; i < MAX_PARTICLES; i++ )
 	{
 		tParticleSystemData *psystem = &mod_ParticleSystemManager.m_aParticles[i];
-		
-		Bool particleBanned = false;
 
 		CParticle *particle = psystem->m_pParticles;
 		
 		RwRaster **frames = psystem->m_ppRaster;
 		
 		tParticleType type = psystem->m_Type;
-	
-		if ( type == PARTICLE_ENGINE_SMOKE
-			|| type == PARTICLE_ENGINE_SMOKE2
-			|| type == PARTICLE_ENGINE_STEAM
-			|| type == PARTICLE_CARFLAME_SMOKE
-			|| type == PARTICLE_RUBBER_SMOKE
-			|| type == PARTICLE_BURNINGRUBBER_SMOKE
-			|| type == PARTICLE_EXHAUST_FUMES
-			|| type == PARTICLE_CARCOLLISION_DUST )
-		{
-			particleBanned = true;
-		}
 		
 		if ( particle )
 		{
@@ -2166,208 +2162,198 @@ void CParticle::Render()
 						w += CGeneral::GetRandomNumberInRange(0.1f, 1.0f) * psystem->m_vecTextureStretch.x;
 						h += CGeneral::GetRandomNumberInRange(0.1f, 1.0f) * psystem->m_vecTextureStretch.y;
 					}
-	  
-	  
-					//if ( i == PARTICLE_WATER_HYDRANT
-					if ( (!CSettings::Get().m_bDisableWaterDrop && i == PARTICLE_WATER_HYDRANT)
-							|| (!particleBanned || Float(RsGlobal.w) * fParticleScaleLimit >= w)
-							&& Float(RsGlobal.h) * fParticleScaleLimit >= h )
+
+					if ( i == PARTICLE_WATER_HYDRANT )
 					{
-						if ( i == PARTICLE_WATER_HYDRANT )
+						RwRect rect;
+						
+						if ( w > 0.0f )
 						{
-							if ( !CSettings::Get().m_bDisableWaterDrop )
-							{
-								RwRect rect;
-								
-								if ( w > 0.0f )
-								{
-									rect.x = Int32(coors.x - SCREEN_STRETCH_X(particle->m_fSize * w));
-									rect.w = Int32(coors.x + SCREEN_STRETCH_X(particle->m_fSize * w));
-								}
-								else
-								{
-									rect.w = Int32(coors.x - SCREEN_STRETCH_X(particle->m_fSize * w));
-									rect.x = Int32(coors.x + SCREEN_STRETCH_X(particle->m_fSize * w));
-								}
-								
-								if ( h > 0.0f )
-								{
-									rect.y = Int32(coors.y - SCREEN_STRETCH_Y(particle->m_fSize * h));
-									rect.h = Int32(coors.y + SCREEN_STRETCH_Y(particle->m_fSize * h));
-								}
-								else
-								{
-									rect.h = Int32(coors.y - SCREEN_STRETCH_Y(particle->m_fSize * h));
-									rect.y = Int32(coors.y + SCREEN_STRETCH_Y(particle->m_fSize * h));
-								}
-								
-								Float screenZ = (coors.z - CDraw::ms_fNearClipZ) 
-									* (CSprite::m_f2DFarScreenZ - CSprite::m_f2DNearScreenZ) * CDraw::ms_fFarClipZ
-									/ ( (CDraw::ms_fFarClipZ - CDraw::ms_fNearClipZ) * coors.z ) + CSprite::m_f2DNearScreenZ;
-	
-								CMBlur::AddRenderFx(Scene.camera, &rect, screenZ, 5);
-							}
+							rect.x = Int32(coors.x - SCREEN_STRETCH_X(particle->m_fSize * w));
+							rect.w = Int32(coors.x + SCREEN_STRETCH_X(particle->m_fSize * w));
 						}
 						else
 						{
-							if ( particle->m_nRotation != 0 && i != PARTICLE_BEASTIE )
-							{
-								CSprite::RenderBufferedOneXLUSprite_Rotate_Dimension(coors.x, coors.y, coors.z,
-										particle->m_fSize * w, particle->m_fSize * h,
-										particle->m_Color.red,
-										particle->m_Color.green,
-										particle->m_Color.blue,
-										particle->m_nColorIntensity,
-										1.0f / coors.z,
-										DEG2RAD(Float(particle->m_nRotation)),
-										particle->m_nAlpha);
-							}
-							else if ( psystem->Flags & SCREEN_TRAIL )
-							{
-								Float fRotation;
-								Float fTrailLength;
-								
-								if ( particle->m_fZGround == 0.0f )
-								{
-									fTrailLength = 0.0f;
-									fRotation = 0.0f;
-								}
-								else
-								{
-									CVector2D vecDist
-									(
-										coors.x - particle->m_fZGround,
-										coors.y - particle->m_fExpansionRate
-									);
+							rect.w = Int32(coors.x - SCREEN_STRETCH_X(particle->m_fSize * w));
+							rect.x = Int32(coors.x + SCREEN_STRETCH_X(particle->m_fSize * w));
+						}
+						
+						if ( h > 0.0f )
+						{
+							rect.y = Int32(coors.y - SCREEN_STRETCH_Y(particle->m_fSize * h));
+							rect.h = Int32(coors.y + SCREEN_STRETCH_Y(particle->m_fSize * h));
+						}
+						else
+						{
+							rect.h = Int32(coors.y - SCREEN_STRETCH_Y(particle->m_fSize * h));
+							rect.y = Int32(coors.y + SCREEN_STRETCH_Y(particle->m_fSize * h));
+						}
+						
+						Float screenZ = (coors.z - CDraw::ms_fNearClipZ) 
+							* (CSprite::m_f2DFarScreenZ - CSprite::m_f2DNearScreenZ) * CDraw::ms_fFarClipZ
+							/ ( (CDraw::ms_fFarClipZ - CDraw::ms_fNearClipZ) * coors.z ) + CSprite::m_f2DNearScreenZ;
 	
-									Float fDist = vecDist.Magnitude();
-	
-									fTrailLength = fDist;
-									
-									//Float fRot = atan2( vecDist.x / fDist, sqrtf(1.0f - vecDist.x / fDist * (vecDist.x / fDist)) );
-									Float fRot = asinf(vecDist.x / fDist);
-	
-									fRotation = fRot;
-	
-									if ( vecDist.y < 0.0f )
-										fRotation = -1.0f * fRot + DEG2RAD(180.0f);
-									
-									//fRotation = RAD2DEG(fRotation);
-									//if ( fRotation < 0.0f )
-									//	fRotation += 360.0f;
-									
-									Float fSpeed = particle->m_vecVelocity.Magnitude();
-									
-									Float fNewTrailLength = fSpeed * CTimer::ms_fTimeStep * w * 2.0f;
-									
-									if ( fDist > fNewTrailLength )
-										fTrailLength = fNewTrailLength;
-								}
-								
-								CSprite::RenderBufferedOneXLUSprite_Rotate_Dimension(coors.x, coors.y, coors.z,
-										particle->m_fSize * w,
-										particle->m_fSize * h + fTrailLength * psystem->m_fTrailLengthMultiplier,
-										particle->m_Color.red,
-										particle->m_Color.green,
-										particle->m_Color.blue,
-										particle->m_nColorIntensity,
-										1.0f / coors.z,
-										fRotation,
-										particle->m_nAlpha);
-				
-								//particle->m_vecScreenPosition = coors;
+						CMBlur::AddRenderFx(Scene.camera, &rect, screenZ, 5);
+					}
+					else
+					{
+						if ( particle->m_nRotation != 0 && i != PARTICLE_BEASTIE )
+						{
+							CSprite::RenderBufferedOneXLUSprite_Rotate_Dimension(coors.x, coors.y, coors.z,
+									particle->m_fSize * w, particle->m_fSize * h,
+									particle->m_Color.red,
+									particle->m_Color.green,
+									particle->m_Color.blue,
+									particle->m_nColorIntensity,
+									1.0f / coors.z,
+									DEG2RAD(Float(particle->m_nRotation)),
+									particle->m_nAlpha);
+						}
+						else if ( psystem->Flags & SCREEN_TRAIL )
+						{
+							Float fRotation;
+							Float fTrailLength;
 							
-								particle->m_fZGround = coors.x;				// WTF ?
-								particle->m_fExpansionRate =  coors.y;		// WTF ?
-							}
-							else if ( psystem->Flags & SPEED_TRAIL )
+							if ( particle->m_fZGround == 0.0f )
 							{
-								CVector vecPrevPos = particle->m_vecPosition - particle->m_vecVelocity;
-								Float fRotation;
-								Float fTrailLength;
-								CVector vecScreenPosition;
-								
-								if ( CSprite::CalcScreenCoors(vecPrevPos, vecScreenPosition, &fTrailLength, &fRotation, true) )
-								{
-									CVector2D vecDist
-									(
-										coors.x - vecScreenPosition.x,
-										coors.y - vecScreenPosition.y
-									);
-									
-									Float fDist = vecDist.Magnitude();
-									
-									fTrailLength = fDist;
-									
-									//Float fRot = atan2(vecDist.x / fDist, sqrt(1.0f - vecDist.x / fDist * (vecDist.x / fDist)));
-									Float fRot = asinf(vecDist.x / fDist);
-									
-									fRotation = fRot;
-									
-									if ( vecDist.y < 0.0f )
-										fRotation = -1.0f * fRot + DEG2RAD(180.0f);
-									
-									//fRotation = RAD2DEG(fRotation);
-									
-									//if ( fRotation < 0.0f )
-									//	fRotation += 360.0f;
-								}
-								else
-								{
-									fRotation = 0.0f;
-									fTrailLength = 0.0f;
-								}
-								
-								CSprite::RenderBufferedOneXLUSprite_Rotate_Dimension(coors.x, coors.y, coors.z,
-										particle->m_fSize * w,
-										particle->m_fSize * h + fTrailLength * psystem->m_fTrailLengthMultiplier,
-										particle->m_Color.red,
-										particle->m_Color.green,
-										particle->m_Color.blue,
-										particle->m_nColorIntensity,
-										1.0f / coors.z,
-										fRotation,
-										particle->m_nAlpha);
+								fTrailLength = 0.0f;
+								fRotation = 0.0f;
 							}
-							else if ( psystem->Flags & VERT_TRAIL )
-							{
-								Float fTrailLength = fabsf(particle->m_vecVelocity.z * 10.0f);
-	
-								CSprite::RenderBufferedOneXLUSprite(coors.x, coors.y, coors.z,
-										particle->m_fSize * w,
-										(particle->m_fSize + fTrailLength * psystem->m_fTrailLengthMultiplier) * h,
-										particle->m_Color.red,
-										particle->m_Color.green,
-										particle->m_Color.blue,
-										particle->m_nColorIntensity,
-										1.0f / coors.z,
-										particle->m_nAlpha);
-							}
-							else if ( i == PARTICLE_RAINDROP_SMALL )
-							{
-								CSprite::RenderBufferedOneXLUSprite(coors.x, coors.y, coors.z,
-										particle->m_fSize * w * 0.05f,
-										particle->m_fSize * h,
-										particle->m_Color.red,
-										particle->m_Color.green,
-										particle->m_Color.blue,
-										particle->m_nColorIntensity,
-										1.0f / coors.z,
-										particle->m_nAlpha);
-							}
-							/*else if ( i == PARTICLE_BOAT_WAKE )*/
 							else
 							{
-								CSprite::RenderBufferedOneXLUSprite(coors.x, coors.y, coors.z,
-										particle->m_fSize * w,
-										particle->m_fSize * h,
-										particle->m_Color.red,
-										particle->m_Color.green,
-										particle->m_Color.blue,
-										particle->m_nColorIntensity,
-										1.0f / coors.z,
-										particle->m_nAlpha);
+								CVector2D vecDist
+								(
+									coors.x - particle->m_fZGround,
+									coors.y - particle->m_fExpansionRate
+								);
+	
+								Float fDist = vecDist.Magnitude();
+	
+								fTrailLength = fDist;
+								
+								//Float fRot = atan2( vecDist.x / fDist, sqrtf(1.0f - vecDist.x / fDist * (vecDist.x / fDist)) );
+								Float fRot = asinf(vecDist.x / fDist);
+	
+								fRotation = fRot;
+	
+								if ( vecDist.y < 0.0f )
+									fRotation = -1.0f * fRot + DEG2RAD(180.0f);
+								
+								//fRotation = RAD2DEG(fRotation);
+								//if ( fRotation < 0.0f )
+								//	fRotation += 360.0f;
+								
+								Float fSpeed = particle->m_vecVelocity.Magnitude();
+								
+								Float fNewTrailLength = fSpeed * CTimer::ms_fTimeStep * w * 2.0f;
+								
+								if ( fDist > fNewTrailLength )
+									fTrailLength = fNewTrailLength;
 							}
+							
+							CSprite::RenderBufferedOneXLUSprite_Rotate_Dimension(coors.x, coors.y, coors.z,
+									particle->m_fSize * w,
+									particle->m_fSize * h + fTrailLength * psystem->m_fTrailLengthMultiplier,
+									particle->m_Color.red,
+									particle->m_Color.green,
+									particle->m_Color.blue,
+									particle->m_nColorIntensity,
+									1.0f / coors.z,
+									fRotation,
+									particle->m_nAlpha);
+				
+							//particle->m_vecScreenPosition = coors;
+						
+							particle->m_fZGround = coors.x;				// WTF ?
+							particle->m_fExpansionRate =  coors.y;		// WTF ?
+						}
+						else if ( psystem->Flags & SPEED_TRAIL )
+						{
+							CVector vecPrevPos = particle->m_vecPosition - particle->m_vecVelocity;
+							Float fRotation;
+							Float fTrailLength;
+							CVector vecScreenPosition;
+							
+							if ( CSprite::CalcScreenCoors(vecPrevPos, vecScreenPosition, &fTrailLength, &fRotation, true) )
+							{
+								CVector2D vecDist
+								(
+									coors.x - vecScreenPosition.x,
+									coors.y - vecScreenPosition.y
+								);
+								
+								Float fDist = vecDist.Magnitude();
+								
+								fTrailLength = fDist;
+								
+								//Float fRot = atan2(vecDist.x / fDist, sqrt(1.0f - vecDist.x / fDist * (vecDist.x / fDist)));
+								Float fRot = asinf(vecDist.x / fDist);
+								
+								fRotation = fRot;
+								
+								if ( vecDist.y < 0.0f )
+									fRotation = -1.0f * fRot + DEG2RAD(180.0f);
+								
+								//fRotation = RAD2DEG(fRotation);
+								
+								//if ( fRotation < 0.0f )
+								//	fRotation += 360.0f;
+							}
+							else
+							{
+								fRotation = 0.0f;
+								fTrailLength = 0.0f;
+							}
+							
+							CSprite::RenderBufferedOneXLUSprite_Rotate_Dimension(coors.x, coors.y, coors.z,
+									particle->m_fSize * w,
+									particle->m_fSize * h + fTrailLength * psystem->m_fTrailLengthMultiplier,
+									particle->m_Color.red,
+									particle->m_Color.green,
+									particle->m_Color.blue,
+									particle->m_nColorIntensity,
+									1.0f / coors.z,
+									fRotation,
+									particle->m_nAlpha);
+						}
+						else if ( psystem->Flags & VERT_TRAIL )
+						{
+							Float fTrailLength = fabsf(particle->m_vecVelocity.z * 10.0f);
+	
+							CSprite::RenderBufferedOneXLUSprite(coors.x, coors.y, coors.z,
+									particle->m_fSize * w,
+									(particle->m_fSize + fTrailLength * psystem->m_fTrailLengthMultiplier) * h,
+									particle->m_Color.red,
+									particle->m_Color.green,
+									particle->m_Color.blue,
+									particle->m_nColorIntensity,
+									1.0f / coors.z,
+									particle->m_nAlpha);
+						}
+						else if ( i == PARTICLE_RAINDROP_SMALL )
+						{
+							CSprite::RenderBufferedOneXLUSprite(coors.x, coors.y, coors.z,
+									particle->m_fSize * w * 0.05f,
+									particle->m_fSize * h,
+									particle->m_Color.red,
+									particle->m_Color.green,
+									particle->m_Color.blue,
+									particle->m_nColorIntensity,
+									1.0f / coors.z,
+									particle->m_nAlpha);
+						}
+						/*else if ( i == PARTICLE_BOAT_WAKE )*/
+						else
+						{
+							CSprite::RenderBufferedOneXLUSprite(coors.x, coors.y, coors.z,
+									particle->m_fSize * w,
+									particle->m_fSize * h,
+									particle->m_Color.red,
+									particle->m_Color.green,
+									particle->m_Color.blue,
+									particle->m_nColorIntensity,
+									1.0f / coors.z,
+									particle->m_nAlpha);
 						}
 					}
 				}

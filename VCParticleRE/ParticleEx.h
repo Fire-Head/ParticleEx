@@ -119,6 +119,7 @@ public:
 	static void ClearAllParticles();
 	
 	static void SetFlame5Fix(Bool bEnabled);
+	static void SetWaterDropsInInteriorsFix(Bool bEnabled);
 	
 	static void SetPS2PObjects(Bool bEnabled);
 	static void SetXboxPObjects(Bool bEnabled);

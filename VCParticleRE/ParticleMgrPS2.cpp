@@ -150,6 +150,8 @@ void cParticleSystemMgr::LoadParticleData()
 						entry->m_nFadeAlphaAmount = atoi(value);
 						break;
 
+					// missing on PS2
+/*
 					case CFG_PARAM_INITIAL_ANGLE:
 						entry->m_nZRotationInitialAngle = atoi(value);
 						break;
@@ -173,6 +175,7 @@ void cParticleSystemMgr::LoadParticleData()
 					case CFG_PARAM_Z_RADIUS_CHANGE_AMOUNT:
 						entry->m_fZRadiusChangeAmount = atof(value);
 						break;
+*/
 
 					case CFG_PARAM_ANIMATION_SPEED:
 						entry->m_nAnimationSpeed = atoi(value);

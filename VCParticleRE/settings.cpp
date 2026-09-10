@@ -40,10 +40,12 @@ void CSettings::Load(Bool bReload)
 	
 	
 	m_bFixMolotovBug = Ini.ReadBoolean("MAIN", "bFixXboxMolotovBug", true);
+	m_bRestoreXboxHydrantWaterSpray = Ini.ReadBoolean("MAIN", "bRestoreXboxHydrantWaterSpray", false);
 	m_bFixFlame5Bug = Ini.ReadBoolean("MAIN", "bFixFlame5Bug", false);
 	//m_bUsePS2CarPuddlePhysics = Ini.ReadBoolean("MAIN", "bUsePS2CarPuddlePhysics", false);
 	//m_bAltPS2Carsplash = Ini.ReadBoolean("MAIN", "bUseAltPS2Carsplash", false);
 	//m_bCorrectWheelsRainWaterSplash = Ini.ReadBoolean("MAIN", "bUseNewWheelsWaterSplash", false);
+	m_bFixWaterDropsInInteriors = Ini.ReadBoolean("MAIN", "bFixWaterDropsInInteriors", false);
 	m_bDarkSpotsBugFix = Ini.ReadBoolean("MAIN", "bDarkSpotsBugFix", false);
 	
 	//m_nParticleLimit = Ini.ReadInteger("MAIN", "nParticleLimit", CParticleArray::DEFAULT_PARTICLE_ARRAY_SIZE);
@@ -66,10 +68,12 @@ void CSettings::Save()
 
 	Ini.WriteString("MAIN", "Particle", (char *)aParticle[m_nParticleSwitch]);
 	Ini.WriteBoolean("MAIN", "bFixXboxMolotovBug", m_bFixMolotovBug);
+	Ini.WriteBoolean("MAIN", "bRestoreXboxHydrantWaterSpray", m_bRestoreXboxHydrantWaterSpray);
 	Ini.WriteBoolean("MAIN", "bFixFlame5Bug", m_bFixFlame5Bug);
 	//Ini.WriteBoolean("MAIN", "bUsePS2CarPuddlePhysics", m_bUsePS2CarPuddlePhysics);
 	//Ini.WriteBoolean("MAIN", "bUseAltPS2Carsplash", m_bAltPS2Carsplash);
 	//Ini.WriteBoolean("MAIN", "bUseNewWheelsWaterSplash", m_bCorrectWheelsRainWaterSplash);
+	Ini.WriteBoolean("MAIN", "bFixWaterDropsInInteriors", m_bFixWaterDropsInInteriors);
 	Ini.WriteBoolean("MAIN", "bDarkSpotsBugFix", m_bDarkSpotsBugFix);
 	
 	Ini.WriteBoolean("MAIN", "bDisableVanillaWaterDrop", m_bDisableWaterDrop);
@@ -99,6 +103,7 @@ void CSettings::ApplyInGame()
 	//CParticleArray::ReInitArrays();
 	
 	CParticleEx::SetFlame5Fix(m_bFixFlame5Bug);
+	CParticleEx::SetWaterDropsInInteriorsFix(m_bFixWaterDropsInInteriors);
 }
 
 void CSettings::Reset()
@@ -106,10 +111,12 @@ void CSettings::Reset()
 	//m_nParticleLimit = CParticleArray::DEFAULT_PARTICLE_ARRAY_SIZE;
 	m_nParticleSwitch = PS_ORIGINAL;
 	m_bFixMolotovBug = true;
+	m_bRestoreXboxHydrantWaterSpray = true;
 	m_bFixFlame5Bug = false;
 	//m_bUsePS2CarPuddlePhysics = false;
 	//m_bAltPS2Carsplash = false;
 	//m_bCorrectWheelsRainWaterSplash = false;
+	m_bFixWaterDropsInInteriors = false;
 	m_bDarkSpotsBugFix = false;
 	
 	m_bDisableWaterDrop = true;

@@ -87,6 +87,7 @@
     <ClCompile Include="ParticleMgrXB2.cpp" />
     <ClCompile Include="ParticleXB.cpp" />
     <ClCompile Include="ParticleXB2.cpp" />
+    <ClCompile Include="PObjectMgr.cpp" />
     <ClCompile Include="settings.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +138,7 @@
     <ClInclude Include="ParticleMgrXB2.h" />
     <ClInclude Include="ParticleXB.h" />
     <ClInclude Include="ParticleXB2.h" />
+    <ClInclude Include="PObjectMgr.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="settings.h" />
   </ItemGroup>

@@ -34,6 +34,14 @@ float HeatHazeSclY(float y)
 	return y * float(scrnH) * sclH;
 }
 
+int GetFixedArea()
+{
+	if ( CSettings::Get().m_bFixWaterDropsInInteriors )
+		return 0;
+	
+	return CGame::currArea;
+}
+
 void * __cdecl _AddParticle(Int32 type, CVector const &vecPos, CVector const &vecDir, CEntity *pEntity, Float fSize, RwRGBA const &color, Int32 nRotationSpeed, Int32 nRotation, Int32 nCurFrame, Int32 nLifeSpan)
 {
 	return CParticleEx::AddParticle(type, vecPos, vecDir, pEntity, fSize, color, nRotationSpeed, nRotation, nCurFrame, nLifeSpan);
@@ -422,6 +430,11 @@ void onFixFlame5Bug()
 	CParticleEx::SetFlame5Fix(CSettings::Get().m_bFixFlame5Bug);
 }
 
+void onFixWaterDropsInInteriors()
+{
+	CParticleEx::SetWaterDropsInInteriorsFix(CSettings::Get().m_bFixWaterDropsInInteriors);
+}
+
 void SaveSet()
 {
 	CSettings::Get().Save();
@@ -447,13 +460,15 @@ void CheckAsi()
 		DebugMenuEntry *e = DebugMenuAddVar("ParticleEx", "switch", &CSettings::Get().m_nParticleSwitch, onSwitchChange, 1, 0, PS_MAX - 1, aParticle);
 		DebugMenuEntrySetWrap(e, true);
 		
-		DebugMenuAddVarBool8("ParticleEx", "[Xbox]   Fix Molotov Bug", (int8_t *)&CSettings::Get().m_bFixMolotovBug, NULL);
-		DebugMenuAddVarBool8("ParticleEx", "[PS2/PC] Fix flame5 Bug", (int8_t *)&CSettings::Get().m_bFixFlame5Bug, onFixFlame5Bug);
-		DebugMenuAddVarBool8("ParticleEx", "[Xbox]   Disable Vanilla Waterdrops", (int8_t *)&CSettings::Get().m_bDisableWaterDrop, NULL);
-		DebugMenuAddVarBool8("ParticleEx", "[Xbox]   Disable Vanilla Blooddrops", (int8_t *)&CSettings::Get().m_bDisableBloodDrop, NULL);
-		//DebugMenuAddVarBool8("ParticleEx", "[PS2]    Use Puddles Surface Physics", (int8_t *)&CSettings::Get().m_bUsePS2CarPuddlePhysics, NULL);
-		//DebugMenuAddVarBool8("ParticleEx", "[PS2]    Use Alternative Car Splash", (int8_t *)&CSettings::Get().m_bAltPS2Carsplash, NULL);
-		DebugMenuAddVarBool8("ParticleEx", "[ANY]    Explosion Dark Spot Fix", (int8_t *)&CSettings::Get().m_bDarkSpotsBugFix, NULL);
+		DebugMenuAddVarBool8("ParticleEx", "[Xbox]     Fix Molotov Bug", (int8_t *)&CSettings::Get().m_bFixMolotovBug, NULL);
+		DebugMenuAddVarBool8("ParticleEx", "[Xbox]     Restore Hydrant Waterspray", (int8_t *)&CSettings::Get().m_bRestoreXboxHydrantWaterSpray, NULL);
+		DebugMenuAddVarBool8("ParticleEx", "[PS2/PC]   Fix flame5 Bug", (int8_t *)&CSettings::Get().m_bFixFlame5Bug, onFixFlame5Bug);
+		DebugMenuAddVarBool8("ParticleEx", "[PS2/Xbox] Disable Vanilla Waterdrops", (int8_t *)&CSettings::Get().m_bDisableWaterDrop, NULL);
+		DebugMenuAddVarBool8("ParticleEx", "[PS2/Xbox] Disable Vanilla Blooddrops", (int8_t *)&CSettings::Get().m_bDisableBloodDrop, NULL);
+		DebugMenuAddVarBool8("ParticleEx", "[ANY]      Fix Waterdrops in Interiors", (int8_t *)&CSettings::Get().m_bFixWaterDropsInInteriors, onFixWaterDropsInInteriors);
+		//DebugMenuAddVarBool8("ParticleEx", "[PS2]      Use Puddles Surface Physics", (int8_t *)&CSettings::Get().m_bUsePS2CarPuddlePhysics, NULL);
+		//DebugMenuAddVarBool8("ParticleEx", "[PS2]      Use Alternative Car Splash", (int8_t *)&CSettings::Get().m_bAltPS2Carsplash, NULL);
+		DebugMenuAddVarBool8("ParticleEx", "[ANY]      Explosion Dark Spot Fix", (int8_t *)&CSettings::Get().m_bDarkSpotsBugFix, NULL);
 		
 		//DebugMenuAddUInt32("ParticleEx", "Particles Limit", (uint32_t *)&CSettings::Get().m_nParticleLimit, onParticleLimitChange, 100, 100, 2000000000, NULL);
 	    //

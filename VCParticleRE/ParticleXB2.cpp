@@ -1296,7 +1296,12 @@ void CParticle::Update()
 			
 			if ( psystem->m_Type == PARTICLE_WATERDROP )
 			{
+				extern int GetFixedArea();
+#ifdef FIX_BUGS
+				if ( GetFixedArea() != 0 || clearWaterDrop == true )
+#else
 				if ( CGame::currArea != 0 || clearWaterDrop == true )
+#endif
 				{
 					bRemoveParticle = true;
 					continue;
@@ -1460,10 +1465,15 @@ void CParticle::Update()
 					fDistToCam = (TheCamera.m_sCoords.pos - vecPos).Magnitude();
 				}
 
+				extern int GetFixedArea();
 				if ( numWaterDropOnScreen < nMaxDrops && numWaterDropOnScreen < 63
 					&& fDistToCam < 10.0f
 					&& clearWaterDrop == false
+#ifdef FIX_BUGS
+					&& GetFixedArea() == 0 )
+#else
 					&& CGame::currArea == 0 )
+#endif
 				{
 					CVector vecWaterdropTarget
 					(
@@ -2254,14 +2264,14 @@ void CParticle::Render()
 					if ( /*i == PARTICLE_WATER_HYDRANT
 							||*/ // vienna
 							
-							(!CSettings::Get().m_bDisableWaterDrop && i == PARTICLE_WATER_HYDRANT) ||
+							(CSettings::Get().m_bRestoreXboxHydrantWaterSpray && i == PARTICLE_WATER_HYDRANT) ||
 							(!particleBanned || Float(RsGlobal.w) * fParticleScaleLimit >= w)
 							&& Float(RsGlobal.h) * fParticleScaleLimit >= h )
 					{
 						
 						if ( i == PARTICLE_WATER_HYDRANT ) // disabled on XBOX
 						{
-							if ( !CSettings::Get().m_bDisableWaterDrop )
+							if ( CSettings::Get().m_bRestoreXboxHydrantWaterSpray )
 							{
 								RwRect rect;
 								

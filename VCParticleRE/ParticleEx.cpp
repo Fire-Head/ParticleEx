@@ -1,5 +1,6 @@
 #include "ParticleEx.h"
 #include "_precl.h"
+#include "PObjectMgr.h"
 #include "settings.h"
 #include "inc/CPatch.h"
 
@@ -121,6 +122,7 @@ void CParticleEx::Initialise()
 	REVCXB2::CParticle::Initialise();
 
 	SetFlame5Fix(CSettings::Get().m_bFixFlame5Bug);
+	SetWaterDropsInInteriorsFix(CSettings::Get().m_bFixWaterDropsInInteriors);
 }
 
 void CParticleEx::Shutdown()
@@ -508,6 +510,24 @@ void CParticleEx::SetFlame5Fix(Bool bEnabled)
 	REVCXB2::CParticle::FixFlame5Bug(bEnabled);
 }
 
+void CParticleEx::SetWaterDropsInInteriorsFix(Bool bEnabled)
+{
+	static int fakeCurrArea = 0;
+	
+	if ( bEnabled )
+	{
+		CPatch::SetPointer(AddressByVersion(0x562165, 0x562185, 0x562055) + 2, &fakeCurrArea);
+		CPatch::SetPointer(AddressByVersion(0x5628E3, 0x562903, 0x5627D3) + 2, &fakeCurrArea);
+	}
+	else
+	{
+		void *realCurrArea = (void*)AddressByVersion(0x978810, 0x978818, 0x977818);
+		
+		CPatch::SetPointer(AddressByVersion(0x562165, 0x562185, 0x562055) + 2, realCurrArea);
+		CPatch::SetPointer(AddressByVersion(0x5628E3, 0x562903, 0x5627D3) + 2, realCurrArea);
+	}
+}
+
 void CParticleEx::SetPS2PObjects(Bool bEnabled)
 {
 	;
@@ -520,16 +540,65 @@ void CParticleEx::UpdatePObjects_PS2(Bool bReset)
 
 void CParticleEx::SetXboxPObjects(Bool bEnabled)
 {
-	;
+	if ( bEnabled )
+	{
+		// POBJECT_FIRE_HYDRANT
+		CPatch::SetInt(AddressByVersion(0x4E86AB, 0x4E86CB, 0x4E856B) + 1, 15000); //m_nRemoveTimer
+	}
+	else
+	{
+		// POBJECT_FIRE_HYDRANT
+		CPatch::SetInt(AddressByVersion(0x4E86AB, 0x4E86CB, 0x4E856B) + 1, 5000); //m_nRemoveTimer
+	}
 }
 
 void CParticleEx::UpdatePObjects_Xbox(Bool bReset)
 {
-	;
+	if ( bReset == false )
+	{
+		for ( Int32 i = 0; i < getMaxPObjects(); i++ )
+		{
+			CParticleObject *pobj = &getPObject(i);
+			
+			if ( pobj->m_nState != PARTICLEOBJECTSTATE_UPDATE_CLOSE && pobj->m_nState != PARTICLEOBJECTSTATE_UPDATE_FAR )
+				continue;
+			
+			switch ( pobj->m_Type )
+			{
+				case POBJECT_FIRE_HYDRANT:
+					{
+						if ( pobj->m_nRemoveTimer != 0 && pobj->m_nRemoveTimer > CTimer::m_snTimeInMilliseconds )
+							pobj->m_nRemoveTimer += 15000 - 5000;
+					}
+					break;
+			}
+		}
+	}
+	else
+	{
+		for ( Int32 i = 0; i < getMaxPObjects(); i++ )
+		{
+			CParticleObject *pobj = &getPObject(i);
+			
+			if ( pobj->m_nState != PARTICLEOBJECTSTATE_UPDATE_CLOSE && pobj->m_nState != PARTICLEOBJECTSTATE_UPDATE_FAR )
+				continue;
+			
+			switch ( pobj->m_Type )
+			{
+				case POBJECT_FIRE_HYDRANT:
+					{
+						if ( pobj->m_nRemoveTimer != 0 && pobj->m_nRemoveTimer > CTimer::m_snTimeInMilliseconds )
+							pobj->m_nRemoveTimer -= 15000 - 5000;
+					}
+					break;
+			}
+		}
+	}
 }
 
 void CParticleEx::ResetPObjects()
 {
+	UpdatePObjects_Xbox(true);
 	UpdatePObjects_PS2(true);
 }
 
