@@ -1466,6 +1466,11 @@ void onJetPos()
 		CParticleEx::SetPS2JetPos(CSettings::Get().m_bPS2JetPos);
 }
 
+void OnPS2Rain()
+{
+	CParticleEx::SetPS2Rain(CSettings::Get().m_bPS2Rain);
+}
+
 void SaveSet()
 {
 	CSettings::Get().Save();
@@ -1499,6 +1504,7 @@ void CheckAsi()
 		DebugMenuAddVarBool8("ParticleEx", "[ANY]    Explosion Dark Spot Fix", (int8_t *)&CSettings::Get().m_bDarkSpotsBugFix, NULL);
 		DebugMenuAddVarBool8("ParticleEx", "[ANY]    PS2 Jet Explosion", (int8_t *)&CSettings::Get().m_bPS2JetPos, onJetPos);
 		DebugMenuAddVarBool8("ParticleEx", "[ANY]    Vice City Jet Explosion", (int8_t *)&CSettings::Get().m_bVCJet, onJetPos);
+		DebugMenuAddVarBool8("ParticleEx", "[ANY]    PS2 Rain", (int8_t *)&CSettings::Get().m_bPS2Rain, OnPS2Rain);
 		
 		DebugMenuAddUInt32("ParticleEx", "Particles Limit", (uint32_t *)&CSettings::Get().m_nParticleLimit, onParticleLimitChange, 100, 100, 2000000000, NULL);
 	
@@ -1608,10 +1614,22 @@ void delayedPatches()
 	}
 }
 
+struct tRainStreak
+{
+  CVector position;
+  CVector direction;
+  unsigned int timer;
+};
+
+VALIDATE_SIZE(tRainStreak, 0x1C);
+
+const int NUM_RAIN_STREAKS = 50;
+tRainStreak Streaks[NUM_RAIN_STREAKS];
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
 	if(reason == DLL_PROCESS_ATTACH)
-	{	
+	{
 		PluginErrorCheck(PLUGINPREF_VERSION_ANY | PLUGINPREF_CHECK_ASI_LOADER);
 
 		CParticleArray::Initialise();
@@ -1783,6 +1801,47 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 		CPatch::RedirectCall(AddressByVersion(0x559891, 0x5599C1, 0x559971), _AddJetExplosion);
 
 		CPatch::RedirectCall(AddressByVersion(0x55923E, 0x55936E, 0x55931E), _DarkSpotAddPermanentShadow);
+		
+		{
+			int RenderRainStreaksAddress = AddressByVersion(0x524550, 0x524790, 0x524720);
+			
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x235 + 2, &Streaks[0].position.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x378 + 2, &Streaks[0].position.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x3CB + 2, &Streaks[0].position.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x3D1 + 2, &Streaks[0].position.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x412 + 2, &Streaks[0].position.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x418 + 2, &Streaks[0].position.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x472 + 2, &Streaks[0].position.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x478 + 2, &Streaks[0].position.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x249 + 2, &Streaks[0].position.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x398 + 2, &Streaks[0].position.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x3EB + 2, &Streaks[0].position.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x3F1 + 2, &Streaks[0].position.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x42D + 2, &Streaks[0].position.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x433 + 2, &Streaks[0].position.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x4A1 + 2, &Streaks[0].position.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x4A7 + 2, &Streaks[0].position.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x25D + 2, &Streaks[0].position.z);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x3B0 + 2, &Streaks[0].position.z);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x448 + 2, &Streaks[0].position.z);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x44E + 2, &Streaks[0].position.z);
+			
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x1FC + 2, &Streaks[0].direction.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x22D + 2, &Streaks[0].direction.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x337 + 2, &Streaks[0].direction.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x370 + 2, &Streaks[0].direction.x);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x206 + 2, &Streaks[0].direction.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x243 + 2, &Streaks[0].direction.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x347 + 2, &Streaks[0].direction.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x390 + 2, &Streaks[0].direction.y);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x210 + 2, &Streaks[0].direction.z);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x257 + 2, &Streaks[0].direction.z);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x351 + 2, &Streaks[0].direction.z);
+			
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x110 + 2, &Streaks[0].timer);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x157 + 2, &Streaks[0].timer);
+			CPatch::SetPointer(RenderRainStreaksAddress + 0x4AD + 2, &Streaks[0].timer);
+		}
 	}
 	return TRUE;
 }

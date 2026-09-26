@@ -304,6 +304,15 @@ This section focuses on the optional features that ParticleEx provides. Some of 
     </th>
   </table>
 
+* ### [III] PS2 Rain
+  In addition to particle effects downgrades, the PC version of the game also received a downgrade in rain density by reducing the number of rain streaks from ***50*** (as it was on PS2) to ***35***.
+  
+  <p align="left">
+    <img width="800" height="600" alt="rain" src="https://github.com/user-attachments/assets/ef2eb29d-7269-48cf-830d-905d6371b189" />
+  </p>
+  
+  And although these changes are barely noticeable, the plugin still gives you the option to restore the original look.
+
 * ### [III] Additional PS2 2dfx changes
   In addition to the downgrades in pobj/2dfx code, the PC port also received changes to the resource files, which resulted in some of effects placed on the map looking slightly different. It's hard to say whether these changes were made intentionally to make things work better with the downgrades or they were accidental and came along with a different version of the map (it's a well known fact that the PC port has more objects).
 

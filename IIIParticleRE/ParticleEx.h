@@ -124,6 +124,7 @@ public:
 	static void SetFlame5Fix(Bool bEnabled);
 	static void SetPS2JetPos(Bool bEnabled);
 	static void SetVCJetPos();
+	static void SetPS2Rain(Bool bEnabled);
 	
 	static void SetXboxPObjects(Bool bEnabled);
 	static void SetPS2PObjects(Bool bEnabled);

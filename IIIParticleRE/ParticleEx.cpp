@@ -136,6 +136,8 @@ void CParticleEx::Initialise()
 		SetVCJetPos();
 	else
 		SetPS2JetPos(CSettings::Get().m_bPS2JetPos);
+	
+	SetPS2Rain(CSettings::Get().m_bPS2Rain);
 }
 
 void CParticleEx::Shutdown()
@@ -407,6 +409,14 @@ void CParticleEx::SetVCJetPos()
 {
 	SetPS2JetPos(false);
 	CPatch::SetInt(AddressByVersion(0x55982E, 0x55995E, 0x55990E) + 4, 18); // BOOT
+}
+
+void CParticleEx::SetPS2Rain(Bool bEnabled)
+{
+	if ( bEnabled )
+		CPatch::SetChar(AddressByVersion(0x524A0A, 0x524C4A, 0x524BDA) + 4, 50);
+	else
+		CPatch::SetChar(AddressByVersion(0x524A0A, 0x524C4A, 0x524BDA) + 4, 35);
 }
 
 void CParticleEx::GenerateFlameThrowerParticles(CVector pos, CVector dir)

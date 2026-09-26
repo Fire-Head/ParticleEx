@@ -19,7 +19,7 @@ void CSettings::Load(Bool bReload)
 {
 	CIniReader Ini("");
 
-	cppext::String particle = Ini.ReadString("MAIN", "Particle", aParticle[PS_ORIGINAL]);
+	cppext::String particle = Ini.ReadString("MAIN", "Particle", aParticle[PS_PS2]);
 
 	m_nParticleSwitch = -1;
 	
@@ -37,12 +37,13 @@ void CSettings::Load(Bool bReload)
 	
 	m_bFixMolotovBug = Ini.ReadBoolean("MAIN", "bFixXboxMolotovBug", true);
 	m_bFixFlame5Bug = Ini.ReadBoolean("MAIN", "bFixPCPS2Flame5Bug", false);
-	m_bUsePS2CarPuddlePhysics = Ini.ReadBoolean("MAIN", "bUsePS2CarPuddlePhysics", false);
+	m_bUsePS2CarPuddlePhysics = Ini.ReadBoolean("MAIN", "bUsePS2CarPuddlePhysics", true);
 	m_bAltPS2Carsplash = Ini.ReadBoolean("MAIN", "bUseAltPS2Carsplash", false);
-	m_bCorrectWheelsRainWaterSplash = Ini.ReadBoolean("MAIN", "bUseNewWheelsWaterSplash", false);
-	m_bDarkSpotsBugFix = Ini.ReadBoolean("MAIN", "bDarkSpotsBugFix", false);
+	m_bCorrectWheelsRainWaterSplash = Ini.ReadBoolean("MAIN", "bUseNewWheelsWaterSplash", true);
+	m_bDarkSpotsBugFix = Ini.ReadBoolean("MAIN", "bDarkSpotsBugFix", true);
 	m_bPS2JetPos = Ini.ReadBoolean("MAIN", "bPS2Jet", true);
 	m_bVCJet = Ini.ReadBoolean("MAIN", "bVCJet", false);
+	m_bPS2Rain = Ini.ReadBoolean("MAIN", "bPS2Rain", true);
 	
 	m_nParticleLimit = Ini.ReadInteger("MAIN", "nParticleLimit", CParticleArray::DEFAULT_PARTICLE_ARRAY_SIZE);
 	
@@ -68,6 +69,7 @@ void CSettings::Save()
 	Ini.WriteBoolean("MAIN", "bDarkSpotsBugFix", m_bDarkSpotsBugFix);
 	Ini.WriteBoolean("MAIN", "bPS2Jet", m_bPS2JetPos);
 	Ini.WriteBoolean("MAIN", "bVCJet", m_bVCJet);
+	Ini.WriteBoolean("MAIN", "bPS2Rain", m_bPS2Rain);
 	Ini.WriteInteger("MAIN", "nParticleLimit", m_nParticleLimit);
 }
 
@@ -96,20 +98,23 @@ void CSettings::ApplyInGame()
 		CParticleEx::SetVCJetPos();
 	else
 		CParticleEx::SetPS2JetPos(m_bPS2JetPos);
+	
+	CParticleEx::SetPS2Rain(m_bPS2Rain);
 }
 
 void CSettings::Reset()
 {
 	m_nParticleLimit = CParticleArray::DEFAULT_PARTICLE_ARRAY_SIZE;
-	m_nParticleSwitch = PS_ORIGINAL;
+	m_nParticleSwitch = PS_PS2;
 	m_bFixMolotovBug = true;
 	m_bFixFlame5Bug = false;
-	m_bUsePS2CarPuddlePhysics = false;
+	m_bUsePS2CarPuddlePhysics = true;
 	m_bAltPS2Carsplash = false;
-	m_bCorrectWheelsRainWaterSplash = false;
-	m_bDarkSpotsBugFix = false;
+	m_bCorrectWheelsRainWaterSplash = true;
+	m_bDarkSpotsBugFix = true;
 	m_bPS2JetPos = true;
 	m_bVCJet = false;
+	m_bPS2Rain = true;
 }
 
 CSettings &CSettings::Get()

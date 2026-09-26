@@ -14,6 +14,7 @@ public:
 	Bool m_bDarkSpotsBugFix;
 	Bool m_bPS2JetPos;
 	Bool m_bVCJet;
+	Bool m_bPS2Rain;
 	
 	UInt32 m_nParticleSwitch;
 	UInt32 m_nParticleLimit;

@@ -22,7 +22,7 @@ void CSettings::Load(Bool bReload)
 {
 	CIniReader Ini("");
 
-	cppext::String particle = Ini.ReadString("MAIN", "Particle", aParticle[PS_ORIGINAL]);
+	cppext::String particle = Ini.ReadString("MAIN", "Particle", aParticle[PS_PS2]);
 
 	m_nParticleSwitch = -1;
 	
@@ -40,20 +40,20 @@ void CSettings::Load(Bool bReload)
 	
 	
 	m_bFixMolotovBug = Ini.ReadBoolean("MAIN", "bFixXboxMolotovBug", true);
-	m_bRestoreXboxHydrantWaterSpray = Ini.ReadBoolean("MAIN", "bRestoreXboxHydrantWaterSpray", false);
+	m_bRestoreXboxHydrantWaterSpray = Ini.ReadBoolean("MAIN", "bRestoreXboxHydrantWaterSpray", true);
 	m_bFixFlame5Bug = Ini.ReadBoolean("MAIN", "bFixFlame5Bug", false);
 	//m_bUsePS2CarPuddlePhysics = Ini.ReadBoolean("MAIN", "bUsePS2CarPuddlePhysics", false);
 	//m_bAltPS2Carsplash = Ini.ReadBoolean("MAIN", "bUseAltPS2Carsplash", false);
 	//m_bCorrectWheelsRainWaterSplash = Ini.ReadBoolean("MAIN", "bUseNewWheelsWaterSplash", false);
-	m_bFixWaterDropsInInteriors = Ini.ReadBoolean("MAIN", "bFixWaterDropsInInteriors", false);
-	m_bDarkSpotsBugFix = Ini.ReadBoolean("MAIN", "bDarkSpotsBugFix", false);
+	m_bFixWaterDropsInInteriors = Ini.ReadBoolean("MAIN", "bFixWaterDropsInInteriors", true);
+	m_bDarkSpotsBugFix = Ini.ReadBoolean("MAIN", "bDarkSpotsBugFix", true);
 	
 	//m_nParticleLimit = Ini.ReadInteger("MAIN", "nParticleLimit", CParticleArray::DEFAULT_PARTICLE_ARRAY_SIZE);
 	
 	//if ( m_nParticleLimit <= 0 || m_nParticleLimit > 2000000000 )
 	//	FATAL("nParticleLimit must be in > 0 && 2000000000 >= range");
 
-	m_bDisableWaterDrop = Ini.ReadBoolean("MAIN", "bDisableVanillaWaterDrop", true);
+	m_bDisableWaterDrop = Ini.ReadBoolean("MAIN", "bDisableVanillaWaterDrop", false);
 	m_bDisableBloodDrop = Ini.ReadBoolean("MAIN", "bDisableVanillaBloodDrop", false);
 	
 	if ( bReload )
@@ -109,17 +109,17 @@ void CSettings::ApplyInGame()
 void CSettings::Reset()
 {
 	//m_nParticleLimit = CParticleArray::DEFAULT_PARTICLE_ARRAY_SIZE;
-	m_nParticleSwitch = PS_ORIGINAL;
+	m_nParticleSwitch = PS_PS2;
 	m_bFixMolotovBug = true;
 	m_bRestoreXboxHydrantWaterSpray = true;
 	m_bFixFlame5Bug = false;
 	//m_bUsePS2CarPuddlePhysics = false;
 	//m_bAltPS2Carsplash = false;
 	//m_bCorrectWheelsRainWaterSplash = false;
-	m_bFixWaterDropsInInteriors = false;
-	m_bDarkSpotsBugFix = false;
+	m_bFixWaterDropsInInteriors = true;
+	m_bDarkSpotsBugFix = true;
 	
-	m_bDisableWaterDrop = true;
+	m_bDisableWaterDrop = false;
 	m_bDisableBloodDrop = false;
 }
 
